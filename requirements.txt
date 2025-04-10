@@ -1,7 +1,7 @@
 streamlit==1.18.0
 pyrebase4==4.5.0
 streamlit-option-menu==0.3.1
-altair==5.5.0
+altair==4.2.0
 gcloud==0.18.3
 setuptools>=59.5.0
 
