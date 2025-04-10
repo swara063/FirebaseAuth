@@ -18,11 +18,13 @@ if uploaded_file is not None:
         tmp_file_path = tmp_file.name
 
     try:
-        # Initialize Firebase Admin SDK with the uploaded service account credentials
-        cred = credentials.Certificate(tmp_file_path)
-        firebase_admin.initialize_app(cred, {
-            'databaseURL': "https://seizurepredictionneurofeedback-default-rtdb.asia-southeast1.firebasedatabase.app"
-        })
+        # Check if Firebase has already been initialized
+        if not firebase_admin._apps:
+            # Initialize Firebase Admin SDK with the uploaded service account credentials
+            cred = credentials.Certificate(tmp_file_path)
+            firebase_admin.initialize_app(cred, {
+                'databaseURL': "https://seizurepredictionneurofeedback-default-rtdb.asia-southeast1.firebasedatabase.app"
+            })
 
         # Firebase Authentication actions
         selected = option_menu(
@@ -63,4 +65,5 @@ if uploaded_file is not None:
             st.write("Welcome to your health monitoring dashboard 🚀")
     except Exception as e:
         st.error(f"Error initializing Firebase: {e}")
+
 
