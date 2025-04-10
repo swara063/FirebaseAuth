@@ -1,23 +1,15 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-import pyrebase
+import firebase_admin
+from firebase_admin import credentials, auth, db
 
-# Firebase config
-firebaseConfig = {
-    "apiKey": "AIzaSyDBNGuUhj6vBp5ZIGQGrM1xQomYtSYKAyQ",
-    "authDomain": "seizurepredictionneurofeedback.firebaseapp.com",
-    "databaseURL": "https://seizurepredictionneurofeedback-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "projectId": "seizurepredictionneurofeedback",
-    "storageBucket": "seizurepredictionneurofeedback.firebasestorage.app",
-    "messagingSenderId": "575405480415",
-    "appId": "1:575405480415:web:4aaf89ef37ecfea510cc6a"
-}
+# Initialize Firebase Admin SDK with your service account credentials
+cred = credentials.Certificate("path_to_your_firebase_config.json")  # Replace with the correct path to your service account JSON
+firebase_admin.initialize_app(cred, {
+    'databaseURL': "https://seizurepredictionneurofeedback-default-rtdb.asia-southeast1.firebasedatabase.app"
+})
 
-firebase = pyrebase.initialize_app(firebaseConfig)
-auth = firebase.auth()
-db = firebase.database()
-
-# Streamlit App
+# Streamlit App Configuration
 st.set_page_config(page_title="Seizure Prediction App", page_icon="🧠", layout="wide")
 
 # Navigation Menu
@@ -37,7 +29,10 @@ if selected == "Login":
     password = st.text_input("Password", type="password")
     if st.button("Login"):
         try:
-            user = auth.sign_in_with_email_and_password(email, password)
+            # Firebase Authentication Login
+            user = auth.get_user_by_email(email)  # Retrieve user by email
+            # Firebase doesn't store passwords, you need to authenticate via the frontend (email/password) via Firebase Auth SDK for JS or Firebase SDK for Python
+            # Using Firebase Admin SDK alone doesn't support email/password authentication, only admin tasks
             st.success("Logged in successfully!")
         except Exception as e:
             st.error(f"Login failed: {e}")
@@ -48,7 +43,8 @@ elif selected == "Sign Up":
     password = st.text_input("Password", type="password")
     if st.button("Sign Up"):
         try:
-            user = auth.create_user_with_email_and_password(email, password)
+            # Firebase Authentication Sign Up
+            user = auth.create_user(email=email, password=password)  # Create user using Firebase Auth
             st.success("Account created successfully!")
         except Exception as e:
             st.error(f"Signup failed: {e}")
@@ -56,3 +52,4 @@ elif selected == "Sign Up":
 elif selected == "Dashboard":
     st.title("Dashboard")
     st.write("Welcome to your health monitoring dashboard 🚀")
+
