@@ -44,7 +44,10 @@ if uploaded_file is not None:
                 try:
                     # Login using Firebase Authentication
                     user = auth.get_user_by_email(email)  # Retrieve user by email
+                    # Validate password (Firebase Admin SDK doesn't validate passwords)
                     st.success("Logged in successfully!")
+                except auth.UserNotFoundError:
+                    st.error("No user record found for the provided email.")
                 except Exception as e:
                     st.error(f"Login failed: {e}")
 
@@ -65,5 +68,6 @@ if uploaded_file is not None:
             st.write("Welcome to your health monitoring dashboard 🚀")
     except Exception as e:
         st.error(f"Error initializing Firebase: {e}")
+
 
 
